@@ -11,8 +11,7 @@ class Game{
 public:
     Game();
     Game(int cellLength, int mazeLength);   // создание поля
-
-    sf::RenderWindow window;
+    sf::RenderWindow* window;
     int cellLength;
     int mazeLength; // mazeLength % cellLength = 0
     int numOfCells;

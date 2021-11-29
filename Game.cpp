@@ -5,23 +5,24 @@
 #include "Game.h"
 #include "generator.h"
 
+// обновление экрана
 void Game::Refresh(){
-    window.clear();
+    window->clear();
     for (int i = 0; i < numOfCells; i++){
         for (int k = 0; k < numOfCells; k++){
-            window.draw(m_cells[k][i]->m_shape);
+            window->draw(m_cells[k][i]->m_shape);
         }
     }
-    window.display();
+    window->display();
 }
 
 Game::Game(){
     cellLength = 35;
-    mazeLength = 1400; // mazeLength % cellLength = 0
+    mazeLength = 1435; // mazeLength % cellLength = 0
     numOfCells = mazeLength / cellLength;
     m_size = mazeLength / cellLength;
 
-    sf::RenderWindow window(sf::VideoMode(mazeLength, mazeLength), "Maze");
+    window = new sf::RenderWindow(sf::VideoMode(mazeLength, mazeLength), "Maze");
     // заполнение массива
     for (int x_n = 0; x_n < numOfCells; x_n++){
         std::vector<Cell*> temp;
@@ -29,71 +30,13 @@ Game::Game(){
             Cell * tmp = new Cell;
             temp.push_back(tmp);
             temp[y_n]->setPos(x_n * cellLength, y_n * cellLength);
-            window.display();
+            window->display();
         }
         m_cells.push_back(temp);
     }
 
     Generator my_gen(numOfCells, this);
-    // buildmaze
-    position pos(1, 1);
-    while (my_gen.field.hasNotVisited()) {
-        sf::Event event;
-        while(window.pollEvent(event)){
-            // закрытие на esc
-            if(event.type == sf::Event::Closed ||
-               (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
-                window.close();
-        }
-        usleep(10000);
-        my_gen.field.setCellStatus(pos, CELL::Visited);
-        if (my_gen.field.hasUnvisitedNeighbours(pos)) {
-            my_gen.m_stack.push(pos);
-            position newPos = my_gen.field.pickRandNeighbour(pos);
-            my_gen.field.destroyWallBetween(pos, newPos);
-            pos = newPos;
-        } else if (!my_gen.m_stack.empty()) {
-            pos = my_gen.m_stack.top();
-            my_gen.m_stack.pop();
-        } else {
-            pos = my_gen.field.pickRandCell();
-            my_gen.field.setCellStatus(pos, CELL::Pass);
-        }
-        // refreshing (dunno why the refresh function does not work)
-        window.clear();
-        for (int i = 0; i < numOfCells; i++){
-            for (int k = 0; k < numOfCells; k++){
-                window.draw(m_cells[k][i]->m_shape);
-            }
-        }
-        window.display();
-    }
-    my_gen.field.setCellStatus(pos, Exit);
-    my_gen.field.setCellAsExit(pos);
-
-   //  делаем всё желтеньким
-    for (int i = 0; i < numOfCells; i++){
-        sf::Event event;
-        while(window.pollEvent(event)){
-            // закрытие на esc
-            if(event.type == sf::Event::Closed ||
-               (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
-                window.close();
-        }
-        for (int k = 0; k < numOfCells; k++){
-            usleep(1000);
-            m_cells[k][i]->setAsVisited();
-
-            // refreshing (dunno why the refresh function does not work)
-            window.clear();
-            for (int i = 0; i < numOfCells; i++){
-                for (int k = 0; k < numOfCells; k++){
-                    window.draw(m_cells[k][i]->m_shape);
-                }
-            }
-            window.display();
-        }
-    }
+    my_gen.buildMaze();
 }
 
 // интерфейс для изменения статуса клетки
@@ -133,5 +76,5 @@ CELL Game::getCellStatus(position pos)
 
 Game::~Game()
 {
-
+    delete window;
 }

@@ -18,11 +18,11 @@ Generator::Generator(int size, Game* game)
 
 void Generator::buildMaze() {
     sf::Event event;
-    while(field.m_board.window.pollEvent(event)){
+    while(field.m_board.window->pollEvent(event)){
         // закрытие на esc
         if (event.type == sf::Event::Closed ||
         (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
-            field.m_board.window.close();
+            field.m_board.window->close();
     }
 
     position pos(1, 1);
@@ -41,13 +41,7 @@ void Generator::buildMaze() {
             pos = field.pickRandCell();
             field.setCellStatus(pos, CELL::Pass);
         }
-        field.m_board.window.clear();
-        for (int i = 0; i < field.m_board.numOfCells; i++){
-            for (int k = 0; k < field.m_board.numOfCells; k++){
-                field.m_board.window.draw(field.m_board.m_cells[k][i]->m_shape);
-            }
-        }
-        field.m_board.window.display();
+        field.m_board.Refresh();
     }
     field.setCellStatus(pos, Exit);
     field.setCellAsExit(pos);

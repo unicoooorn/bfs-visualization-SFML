@@ -11,6 +11,7 @@ class GeneratorHelper {   // вспомогательный класс для г
     bool m_isPass(position);
 public:
     Game& m_board;
+
     GeneratorHelper(int size, Game* game);
     int getMazeSize();
     bool hasNotVisited();
