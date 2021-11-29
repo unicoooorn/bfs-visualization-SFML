@@ -29,7 +29,7 @@ void Generator::buildMaze() {
     while (field.hasNotVisited()) {
         field.setCellStatus(pos, CELL::Visited);
         if (field.hasUnvisitedNeighbours(pos)) {
-            usleep(10000);
+            usleep(1000);
             m_stack.push(pos);
             position newPos = field.pickRandNeighbour(pos);
             field.destroyWallBetween(pos, newPos);

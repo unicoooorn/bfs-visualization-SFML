@@ -11,8 +11,14 @@ Cell::Cell()
     m_shape.setFillColor(sf::Color::Black);
 }
 
-void Cell::setPos(int x, int y){
-    m_shape.setPosition(x, y);
+void Cell::setPos(int x, int y, int cellLength){
+    m_shape.setPosition(x * cellLength, y * cellLength);
+    m_pos.x = x;
+    m_pos.y = y;
+}
+
+position Cell::getPos(){
+    return m_pos;
 }
 
 CELL Cell::GetStatus()
@@ -31,6 +37,10 @@ void Cell::setAsWall(){
 void Cell::setAsPass(){
     m_status = Pass;
     m_shape.setFillColor(sf::Color::White);
+}
+void Cell::setAsPath(){
+    m_status = Path;
+    m_shape.setFillColor(sf::Color::Blue);
 }
 
 void Cell::setAsVisited()

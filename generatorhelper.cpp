@@ -8,6 +8,10 @@ bool GeneratorHelper::m_isPass(position pos){
     return m_board.getCellStatus(pos) == CELL::Pass;
 }
 
+bool GeneratorHelper::m_isFinish(position pos){
+    return m_board.getCellStatus(pos) == CELL::Exit;
+}
+
 void GeneratorHelper::setCellAsExit(position pos)
 {
     m_board.setCellAsExit(pos);
@@ -25,6 +29,10 @@ int GeneratorHelper::getMazeSize() {
 
 void GeneratorHelper::setCellAsVisited(position pos) {
     m_board.setCellStatus(pos, CELL::Visited);
+}
+
+void GeneratorHelper::setCellAsPath(position pos) {
+    m_board.setCellStatus(pos, CELL::Path);
 }
 
 bool GeneratorHelper::hasNotVisited() {
@@ -48,6 +56,18 @@ bool GeneratorHelper::hasUnvisitedNeighbours(position pos) {
     if (m_isPass(position(x - 2, y))) return true;
     return false;
 }
+
+bool GeneratorHelper::hasPassToUnvisited(position pos) {
+    int x = pos.x;
+    int y = pos.y;
+    if ((m_isPass(position(x, y - 2)) or m_isFinish(position(x, y - 2))) and m_isPass(position(x, y - 1))) return true;
+    if ((m_isPass(position(x + 2, y)) or m_isFinish(position(x + 2, y))) and m_isPass(position(x + 1, y))) return true;
+    if ((m_isPass(position(x, y + 2)) or m_isFinish(position(x, y + 2))) and m_isPass(position(x, y + 1))) return true;
+    if ((m_isPass(position(x - 2, y)) or m_isFinish(position(x - 2, y))) and m_isPass(position(x - 1, y))) return true;
+    return false;
+}
+
+
 
 void GeneratorHelper::destroyWallBetween(position left, position right) {
     int lx = left.x;
@@ -94,6 +114,35 @@ position GeneratorHelper::pickRandNeighbour(position pos)
         position new_position(x + dx, y + dy);
         if (m_isPass(new_position)) {
 
+            return new_position;
+        }
+    }
+}
+
+position GeneratorHelper::pickRandPass(position pos)
+// предусловие: свободные соседи есть
+{
+    int x = pos.x;
+    int y = pos.y;
+    while (true) {
+        int rand_int = static_cast<int>(getTrueRandomNumber() * 4);
+        int dx = 0, dy = 0;
+        switch (rand_int) {
+            case 0:
+                dy = -2;
+                break;
+            case 1:
+                dx = 2;
+                break;
+            case 2:
+                dy = 2;
+                break;
+            case 3:
+                dx = -2;
+                break;
+        }
+        position new_position(x + dx, y + dy);
+        if ((m_isPass(new_position) or m_isFinish(new_position)) and m_isPass( position( (new_position.x + pos.x) / 2, (new_position.y + pos.y) / 2 ))) {
             return new_position;
         }
     }
