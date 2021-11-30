@@ -69,7 +69,7 @@ Game::Game(){
                     (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
                     window->close();
             }
-            usleep(5000);
+            usleep(100000);
             position pos_tmp = my_gen.field.pickRandPass(u->getPos());
             if (m_cells[pos_tmp.x][pos_tmp.y]->GetStatus() == Exit){
                 prev[(pos_tmp.y-1)/2*m_size_clear+(pos_tmp.x-1)/2] = (u->getPos().y-1)/2*m_size_clear+(u->getPos().x-1)/2;
